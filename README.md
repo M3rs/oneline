@@ -2,6 +2,10 @@
 
 ASCII Fishing
 
+## Play
+
+Built in rust, use `cargo run` to play the game. Sorry, no pre-built binaries set up yet.
+
 ## Controls
 
 q - quit game
