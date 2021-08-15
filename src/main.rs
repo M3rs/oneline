@@ -79,7 +79,7 @@ fn main() {
     let mut catch_idx: usize = 0;
     let mut fail = false;
 
-    loop {
+    'mainloop: loop {
         // wait for next frame + capture input
         engine.wait_frame();
 
@@ -172,10 +172,15 @@ fn main() {
         }
 
         if fail {
-            engine.print_fbg(14, 14, "Game Over!", Color::Red, Color::Black);
-            engine.draw();
-            engine.wait_frame();
-            break;
+            loop {
+                engine.print_fbg(14, 14, "Game Over!", Color::Red, Color::Black);
+                engine.print_fbg(14, 16, "Press q to quit", Color::Red, Color::Black);
+                engine.draw();
+                engine.wait_frame();
+                if engine.is_key_pressed(KeyCode::Char('q')) {
+                    break 'mainloop;
+                }
+            }
         }
 
         let score_s = format!("Score: {}", score);
