@@ -1,4 +1,3 @@
-use std::fs;
 use console_engine::*;
 use crate::oneline::Actor;
 
@@ -14,16 +13,21 @@ pub struct Boat {
     skyline: i32,
 }
 
+static BOAT_TEXT: &'static str = r"
+              O,
+\____________/_)_________/";
+static FISHING_TEXT: &'static str = r"          ^
+          |\  O,
+\_________|_\/_)_________/";
+
 impl Boat {
     pub fn new(skyline: i32) -> Self {
-        let boat_ascii = fs::read_to_string("boat.txt").unwrap();
-        let fishing_ascii = fs::read_to_string("boat_fishing.txt").unwrap();
 
         Self {
             x: 8,
             cast: false,
-            boat_text: boat_ascii,
-            fishing_text: fishing_ascii,
+            boat_text: String::from(BOAT_TEXT),
+            fishing_text: String::from(FISHING_TEXT),
             skyline: skyline,
         }
     }

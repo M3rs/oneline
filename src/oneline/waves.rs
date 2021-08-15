@@ -1,5 +1,4 @@
 use console_engine::*;
-use std::fs;
 use crate::oneline::{ Actor };
 
 pub struct Waves {
@@ -11,13 +10,14 @@ pub struct Waves {
     skyline: i32,
 }
 
+static WAVES_TEXT: &'static str = r"```'-.,_,.-'``'-.,_,.='``'-.,_,.-'``'-.,_,.='````'-.,_,.-'``'-.,_,.='``'-.,_,.-'``'-.,_,.='```";
+
 impl Waves {
     pub fn new(skyline: i32) -> Waves {
-        let waves_ascii = fs::read_to_string("waves.txt").unwrap();
-        let len = waves_ascii.len() as i32;
+        let len = WAVES_TEXT.len() as i32;
         Waves {
             wavex: -1,
-            text: waves_ascii,
+            text: String::from(WAVES_TEXT),
             len: len,
             skyline: skyline,
         }

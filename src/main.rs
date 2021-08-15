@@ -64,7 +64,7 @@ fn main() {
 
     let mut boat_t = Boat::new(skyline);
     // TODO: Fish Handle Input method?
-    let mut fish_t = Fish::new(rng.gen_range(1..width), 20, 8, width);
+    let mut fish_t = Fish::new(rng.gen_range(1..width) - 8, 20, 8, width);
 
     let mut wave_t = Waves::new(skyline); //Waves { wavex: 0 };
     let mut clouds_t = Clouds::new(width);
@@ -134,6 +134,7 @@ fn main() {
         // render
         engine.clear_screen();
 
+        engine.fill_rect(0, 0, width, skyline, pixel::pxl_bg(' ', Color::Black)); // ui
         engine.fill_rect(0, 1, width, skyline, pixel::pxl_bg(' ', Color::Blue)); // sky
         engine.fill_rect(0, skyline + 2, width, height, pixel::pxl_bg(' ', Color::DarkBlue)); // water
 

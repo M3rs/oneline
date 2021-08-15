@@ -1,4 +1,3 @@
-use std::fs;
 use console_engine::*;
 
 use crate::oneline::{ Actor };
@@ -11,14 +10,24 @@ pub struct Clouds {
     text: String,
 }
 
+static CLOUDS_TEXT: &'static str = r"              (`  ).                   _
+             (     ).              .:(`  )`.
+            _(       '`.          :(   .    )
+        .=(`(      .   )     .--  `.  (    ) )
+       ((    (..__.:'-'   .+(   )   ` _`  ) )
+       `(       ) )       (   .  )     (   )  ._
+         ` __.:'   )     (   (   ))     `-'.-(`  )
+      ( )       --'       `- __.'         :(      ))
+     (_.'          .')                    `(    )  ))
+                  (_  )                     ` __.:'";
+
 impl Clouds {
     pub fn new(screen_width: i32) -> Self {
-        let clouds_ascii = fs::read_to_string("clouds.txt").unwrap();
 
         Self {
             x: -53,
             screen_width: screen_width,
-            text: clouds_ascii,
+            text: String::from(CLOUDS_TEXT),
         }
     }
 }
