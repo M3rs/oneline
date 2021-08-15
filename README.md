@@ -6,7 +6,7 @@ ASCII Fishing
 
 ## Play
 
-Built in rust, use `cargo run` to play the game. Sorry, no pre-built binaries set up yet.
+Built in rust, clone and use `cargo run` to play the game -- or -- download from the Release page for your OS and see "Running the Game" below for more specific instructions.
 
 ## Controls
 
