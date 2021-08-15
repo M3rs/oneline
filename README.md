@@ -10,12 +10,25 @@ Built in rust, use `cargo run` to play the game. Sorry, no pre-built binaries se
 
 ## Controls
 
-q - quit game
-
-left/right arrows - move boat (while not casting)
-c - toggle casting
+|Key|Function|
+|---|--------|
+| q | quit game |
+| left/right arrows | move boat (while not casting) |
+| up/down/left/right | hook the fish |
+| c | toggle casting |
+| r | reel in |
 
 When a fish is hooked, press the arrow keys as prompted, then r to reel in the fish.
+
+![key prompt](/res/keys.png?raw=true "key prompt")
+
+If you get the sequence right, it will prompt for "r". Keep pressing it to reel in!
+
+![reel](/res/reel.png?raw=true "reel")
+
+If you mess up, your line breaks and it's game over
+
+![game over](/res/game_over.png?raw=true "reel")
 
 ## Running the Game
 
