@@ -1,0 +1,251 @@
+use console_engine::*;
+
+mod oneline;
+use crate::oneline::Fish;
+use crate::oneline::Waves;
+
+enum State {
+    NoChange,
+    Menu,
+    Play,
+}
+
+trait GameState {
+    fn handle_input(&mut self, engine: &mut ConsoleEngine);
+    fn update(&mut self) -> State;
+    fn draw(&self, engine: &mut ConsoleEngine);
+
+    fn should_quit(&self) -> bool;
+}
+
+struct MenuState {
+    exit: bool,
+    next: bool,
+
+    skyline: i32,
+}
+
+impl MenuState {
+    fn new(skyline: i32) -> Self {
+        Self {
+            exit: false,
+            next: false,
+
+            skyline: skyline,
+        }
+    }
+}
+
+impl GameState for MenuState {
+    fn handle_input(&mut self, engine: &mut ConsoleEngine) {
+        if engine.is_key_pressed(KeyCode::Char('q')) {
+            self.exit = true;
+        }
+        if engine.is_key_pressed(KeyCode::Char('f')) {
+            self.next = true;
+        }
+    }
+
+    fn update(&mut self) -> State {
+        if self.next {
+            State::Play
+        } else {
+            State::NoChange
+        }
+    }
+
+    fn draw(&self, engine: &mut ConsoleEngine) {
+        let width = engine.get_width() as i32;
+
+        engine.fill_rect(0, 0, width, self.skyline, pixel::pxl_bg(' ', Color::Blue));
+        // sky
+    }
+
+    fn should_quit(&self) -> bool {
+        self.exit
+    }
+}
+
+struct FishState {
+    exit: bool,
+
+    waves: Waves,
+}
+
+impl FishState {
+    fn new(skyline: i32) -> Self {
+        Self {
+            exit: false,
+
+            waves: Waves::new(skyline),
+        }
+    }
+}
+
+impl GameState for FishState {
+    fn handle_input(&mut self, engine: &mut ConsoleEngine) {
+        if engine.is_key_pressed(KeyCode::Char('q')) {
+            self.exit = true;
+        }
+    }
+
+    fn update(&mut self) -> State {
+        self.waves.update();
+
+        State::NoChange
+    }
+    fn draw(&self, engine: &mut ConsoleEngine) {
+        self.waves.draw(engine);
+    }
+
+    fn should_quit(&self) -> bool {
+        self.exit
+    }
+}
+
+fn main() {
+    let width: i32 = 80;
+    let height: i32 = 24;
+    let framerate = 3;
+
+    let skyline = 17;
+
+    let mut engine = ConsoleEngine::init(width as u32, height as u32, framerate).unwrap();
+
+    // TODO: Clouds struct, like waves?
+    // TODO: Boat struct
+
+    let clouds = r"              (`  ).                   _
+             (     ).              .:(`  )`.
+            _(       '`.          :(   .    )
+        .=(`(      .   )     .--  `.  (    ) )
+       ((    (..__.:'-'   .+(   )   ` _`  ) )
+       `(       ) )       (   .  )     (   )  ._
+         ` __.:'   )     (   (   ))     `-'.-(`  )
+      ( )       --'       `- __.'         :(      ))
+     (_.'          .')                    `(    )  ))
+                  (_  )                     ` __.:'
+                                        ";
+
+    let boat = r"
+              O,
+\____________/_)_________/";
+
+    let fishing = r"          ^
+          |\  O,
+\_________|_\/_)_________/";
+
+    let mut cloudx = -53;
+
+    let mut fish_t = Fish::new(10, 20, 8);
+
+    let mut boatx = 8;
+    let mut cast = false;
+    let mut hooked = false;
+
+    let mut wave_t = Waves::new(skyline); //Waves { wavex: 0 };
+
+    //let mut state: Box<dyn GameState> = Box::new(MenuState::new(skyline));
+
+    loop {
+        /*
+        engine.wait_frame();
+
+        state.handle_input(&mut engine);
+
+        if state.should_quit() {
+            break;
+        }
+        let next = state.update();
+
+        state.draw(&mut engine);
+
+        engine.draw();
+
+        match next {
+            Play => state = Box::new(FishState::new(skyline)),
+            _ => {},
+        }
+        */
+
+        // wait for next frame + capture input
+        engine.wait_frame();
+
+        // handle input
+        if engine.is_key_pressed(KeyCode::Char('q')) {
+            break;
+        }
+
+        if engine.is_key_pressed(KeyCode::Char('c')) {
+            cast = !cast;
+        }
+        if engine.is_key_pressed(KeyCode::Char('r')) && hooked {
+            fish_t.reel_in();
+        }
+
+        if engine.is_key_held(KeyCode::Left) {
+            boatx -= 1;
+        }
+        if engine.is_key_held(KeyCode::Right) {
+            boatx += 1;
+        }
+
+        // update
+
+        wave_t.update();
+
+        cloudx += 1;
+        if cloudx > width {
+            cloudx = -53;
+        }
+
+        fish_t.update(engine.get_width() as i32);
+
+        if cast && fish_t.get_x() == (boatx + 10) {
+            hooked = true;
+            fish_t.set_hooked(true);
+        }
+
+        // render
+        engine.clear_screen();
+
+        engine.fill_rect(0, 0, width, skyline, pixel::pxl_bg(' ', Color::Blue)); // sky
+        engine.fill_rect(
+            0,
+            skyline + 2,
+            width,
+            height,
+            pixel::pxl_bg(' ', Color::DarkBlue),
+        ); // water
+
+        engine.print_fbg(cloudx, 1, clouds, Color::White, Color::Blue);
+        wave_t.draw(&mut engine);
+
+        // boat
+        engine.print_fbg(
+            boatx,
+            skyline - 2,
+            if cast { fishing } else { boat },
+            Color::White,
+            Color::Blue,
+        );
+        if cast {
+            // boatx + 10 (roughly where line is)
+            engine.set_pxl(boatx + 10, skyline + 1, pixel::pxl_bg('|', Color::DarkBlue));
+            engine.set_pxl(boatx + 10, skyline + 2, pixel::pxl_bg('j', Color::DarkBlue));
+        }
+
+        // fish
+        fish_t.draw(&mut engine);
+
+        // draw UI
+        if hooked {
+            engine.print_fbg(1, 1, "Fish on!", Color::White, Color::Blue);
+        }
+        if fish_t.get_y() < skyline {
+            engine.print_fbg(1, 1, "Caught 'em!", Color::White, Color::Blue);
+        }
+
+        engine.draw();
+    }
+}
