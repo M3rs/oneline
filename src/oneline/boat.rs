@@ -55,12 +55,12 @@ impl Actor for Boat {
             engine.set_pxl(
                 self.x + 10,
                 self.skyline + 1,
-                pixel::pxl_bg('|', Color::DarkBlue)
+                pixel::pxl_fbg('|', Color::White, Color::DarkBlue)
             );
             engine.set_pxl(
                 self.x + 10,
                 self.skyline + 2,
-                pixel::pxl_bg('j', Color::DarkBlue)
+                pixel::pxl_fbg('j', Color::White, Color::DarkBlue)
             );
         }
     }
