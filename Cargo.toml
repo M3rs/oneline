@@ -7,3 +7,4 @@ edition = "2018"
 
 [dependencies]
 console_engine = "2.0.1"
+rand = "*"

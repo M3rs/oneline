@@ -59,32 +59,37 @@ impl Fish {
         self.y
     }
 
-    /*
-    pub fn update(&mut self) {
-        if self.hooked {
-            self.dir *= -1;
-        } else {
-            self.x += 1 * self.dir;
-            if self.x + self.width > self.screen_width || self.x + self.width < 0 {
-                self.dir *= -1;
-            }
-        }
-    }
 
-    pub fn draw(&self, engine: &mut ConsoleEngine) {
-        engine.print_fbg(
-            self.x,
-            self.y,
-            if self.dir > 0 {
-                &self.right
-            } else {
-                &self.left
-            },
-            Color::White,
-            Color::DarkBlue,
-        );
+    /// reverse the fish
+    fn get_fish_ascii(&self) -> String {
+        if self.dir < 0 {
+            return self.left.clone();    
+        }
+
+        // TODO: better reverse fish algorithm
+        let mut s = String::new();
+        for line in self.left.lines() {
+            let chars: Vec<_> = line
+                .chars()
+                .rev()
+                .map(|c| match c {
+                    '\\' => '/',
+                    '/' => '\\',
+                    '>' => '<',
+                    '<' => '>',
+                    ')' => '(',
+                    '(' => ')',
+                    _ => c,
+                })
+                .collect::<_>();
+            let rs: String = chars.iter().collect();
+
+            s.push_str(&rs);
+            s.push_str("\n");
+        }
+
+        return s;
     }
-    */
 }
 
 impl Actor for Fish {
@@ -100,6 +105,7 @@ impl Actor for Fish {
     }
 
     fn draw(&self, engine: &mut ConsoleEngine) {
+
         engine.print_fbg(
             self.x,
             self.y,
@@ -114,3 +120,6 @@ impl Actor for Fish {
     }
 
 }
+
+
+
