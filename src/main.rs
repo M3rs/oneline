@@ -64,7 +64,7 @@ fn main() {
 
     let mut boat_t = Boat::new(skyline);
     // TODO: Fish Handle Input method?
-    let mut fish_t = Fish::new(rng.gen_range(1..width) - 8, 20, 8, width);
+    let mut fish_t = Fish::new(rng.gen_range(1..width) - 8, 20, 8, width, rng.gen_range(0..3));
 
     let mut wave_t = Waves::new(skyline); //Waves { wavex: 0 };
     let mut clouds_t = Clouds::new(width);
@@ -120,7 +120,7 @@ fn main() {
         
         fish_t.update();
 
-        if !fish_t.is_hooked() && boat_t.get_cast() && fish_t.get_x() == (boat_t.get_x() + 10) {
+        if fish_t.check_hooked(&boat_t) {
             fish_t.set_hooked(true);
             let max: u8 = rng.gen_range(3..7);
             let keys = (1..max).map(|_|{
@@ -159,7 +159,7 @@ fn main() {
 
             catch = None;
             catch_idx = 0;
-            fish_t = Fish::new(rng.gen_range(1..width) - 8, 20, 8, width);
+            fish_t = Fish::new(rng.gen_range(1..width) - 8, 20, 8, width, rng.gen_range(0..3));
         }
         if let Some(ref c) = catch {
             if catch_idx < c.len() {

@@ -1,6 +1,5 @@
 use console_engine::*;
-
-use crate::oneline::{ Actor };
+use crate::oneline::{ Actor, Boat };
 
 pub struct Fish {
     x: i32,
@@ -16,15 +15,31 @@ pub struct Fish {
     screen_width: i32,
 }
 
-static FISH_LEFT: &'static str = r" _///_  
+static FISHES_WIDTHS: [i32; 3] = [8, 14, 7];
+
+static FISHES_LEFT: [&'static str; 3] = [
+r" _///_  
 /o    \/
 >_))_./\
-   <    ";
+   <    ",
+r#"  ;,//;,    ,;/
+ o:::::::;;///
+>::::::::;;\\\
+  ''\\\\\'" ';\"#,
+r#">*}}}<>"#  
+];
 
-static FISH_RIGHT: &'static str = r"  _\\\_ 
+static FISHES_RIGHT: [&'static str; 3] = [
+r#"  _\\\_ 
 \/    o\
 /\._))_<
-    >   ";
+    >   "#,
+r#"\;,    ,;\\,; 
+\\\;;:::::::o 
+\\\;;::::::::<
+/;' "'/////'' "#,
+r#"><}}}*>"#
+];
 
 impl Fish {
     /// Make a new fish
@@ -32,16 +47,16 @@ impl Fish {
     /// * `x` - x pos of the fish
     /// * `y` - y pos of the fish
     /// * `width` - width of the fish
-    pub fn new(x: i32, y: i32, width: i32, screen_width: i32) -> Self {
+    pub fn new(x: i32, y: i32, width: i32, screen_width: i32, fishi: usize) -> Self {
 
         Self {
             x: x,
             y: y,
-            width: width,
+            width: FISHES_WIDTHS[fishi],
             dir: 1,
             hooked: false,
-            left: String::from(FISH_LEFT),
-            right: String::from(FISH_RIGHT),
+            left: String::from(FISHES_LEFT[fishi]),
+            right: String::from(FISHES_RIGHT[fishi]),
             screen_width: screen_width,
         }
     }
@@ -58,12 +73,21 @@ impl Fish {
         self.y -= 1;
     }
 
-    pub fn get_x(&self) -> i32 {
-        self.x
-    }
-
     pub fn get_y(&self) -> i32 {
         self.y
+    }
+
+    /// Check if the fish just got hooked
+    /// Based on the direction
+    pub fn check_hooked(&self, boat_t: &Boat) -> bool {
+
+        return !self.hooked
+            && boat_t.get_cast() 
+            && if self.dir < 0 {
+                self.x
+            } else {
+                self.x + self.width
+            } == (boat_t.get_x() + 10);
     }
 }
 
