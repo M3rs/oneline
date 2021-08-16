@@ -47,10 +47,10 @@ impl Fish {
     /// * `x` - x pos of the fish
     /// * `y` - y pos of the fish
     /// * `width` - width of the fish
-    pub fn new(x: i32, y: i32, width: i32, screen_width: i32, fishi: usize) -> Self {
+    pub fn new(x: i32, y: i32, screen_width: i32, fishi: usize) -> Self {
 
         Self {
-            x: x,
+            x: x - FISHES_WIDTHS[fishi],
             y: y,
             width: FISHES_WIDTHS[fishi],
             dir: 1,

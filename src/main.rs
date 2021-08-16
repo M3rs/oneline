@@ -4,51 +4,6 @@ use rand::Rng;
 mod oneline;
 use crate::oneline::{ Actor, Boat, Fish, Waves, Clouds };
 
-/// Check that key pressed matches the sequence
-fn catch_keys(c: &String, catch_idx: &mut usize, engine: &ConsoleEngine) -> bool {
-    let rk = c.chars().nth(*catch_idx).unwrap();
-
-    let up = engine.is_key_pressed(KeyCode::Up);
-    let down = engine.is_key_pressed(KeyCode::Down);
-    let left = engine.is_key_pressed(KeyCode::Left);
-    let right = engine.is_key_pressed(KeyCode::Right);
-
-    match rk {
-        '<' => {
-            if left {
-                *catch_idx += 1;
-            } else if right || up || down {
-                return true;
-            }
-        },
-        '>' => {
-            if right { 
-                *catch_idx += 1;
-            }
-            else if left || up || down {
-                return true;
-            }
-        },
-        '^' => {
-            if up { 
-                *catch_idx += 1;
-            } else if down || left || right {
-                return true;
-            }
-        },
-        'v' => {
-            if down {
-                *catch_idx += 1;
-            } else if up || left || right {
-                return true;
-            }
-        },
-        _ => {},
-    }
-
-    false
-}
-
 fn main() {
     let width: i32 = 80;
     let height: i32 = 24;
@@ -64,7 +19,7 @@ fn main() {
 
     let mut boat_t = Boat::new(skyline);
     // TODO: Fish Handle Input method?
-    let mut fish_t = Fish::new(rng.gen_range(1..width) - 8, 20, 8, width, rng.gen_range(0..3));
+    let mut fish_t = Fish::new(rng.gen_range(1..width), 20, width, rng.gen_range(0..3));
 
     let mut wave_t = Waves::new(skyline); //Waves { wavex: 0 };
     let mut clouds_t = Clouds::new(width);
@@ -104,7 +59,7 @@ fn main() {
         if fish_t.is_hooked() {
             if let Some(ref c) = catch {
                 if catch_idx < c.len() {
-                    fail = catch_keys(c, &mut catch_idx, &mut engine);
+                    fail = oneline::catch_keys(c, &mut catch_idx, &mut engine);
                 } else {
                     if engine.is_key_pressed(KeyCode::Char('r')) {
                         fish_t.reel_in();
@@ -159,7 +114,7 @@ fn main() {
 
             catch = None;
             catch_idx = 0;
-            fish_t = Fish::new(rng.gen_range(1..width) - 8, 20, 8, width, rng.gen_range(0..3));
+            fish_t = Fish::new(rng.gen_range(1..width), 20, width, rng.gen_range(0..3));
         }
         if let Some(ref c) = catch {
             if catch_idx < c.len() {
